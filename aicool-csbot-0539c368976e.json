@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "aicool-csbot",
+  "private_key_id": "0539c368976e0b733d66bc14f17ac50baeff5f80",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCTbT9xwHNnH7TL\nHGjAa8i6MpEFSntyqJty2pMfmtYdooI71vF8NU8XxnxmDsFyk7W60LV+d0isckP1\nSdouWgo5mvI2TsjM4N0wHpStc82JXSp+MiM8rFe9W7jOkkLg2tZa3aKGXyXkde+e\nGuCSc+z30c4IOYwBbNqsEUvPOQrnzyxsGLFz1oJBwcBYDNDIuwjm5v/jn8lMx/3y\nAmEOP28rXyguMvCohhBX8M/VzLNJ1Vxp9fifTc7DcXxLiu6pz13HBtRlvq/AXw74\nUcNgMiF8H4xrSHDN/Fq1qSshb9pic294ODNcN/OFjMAqhXJCJrFtFDf/GMmUKYf6\nxzElYKjFAgMBAAECggEALZueBYBOk0gNQ8qRo3mUuvmawKLGpvV/RZxV6HCbrcZQ\n+NcplM3fHpFSebY15U7J6TXY9/tJ+cNNv8vtmepUAHctWFyuJSepddH4F+Lb4pN2\nalzzZrlAWX3PIeTAmNRKfQjU1zIHRHKxwt04vUXsuMvoq8W1yNkWmyWsqLpSY9zM\n7hTssa7bOCwIhlOukJhz72ig194Tn23dscbIxHD/H8at+kaWmGshQxrEc1fAlowS\n90Wyf73oZTdYeaW+qqb+3Wkmr0fGKn69qoWDaYP42DiAJU9Cm/XRsVqvIpRakaPa\nAmWHrQYec24du9Qxdv3v9vEMVrX+QPFGkHn0mAx5fwKBgQDJoPdzSvxMo+ErfbMF\nLMGHxGgoxOLvXl0RB5XYReo0pWigMJXeM265wXNCmzI9ZcXmhdkpsh3FN5BtIejP\n1Q8P2L/ItRv7bqloG80EmnwehvQATUlLoZssEr4YnvZBqMPsj3J/+DGbhwBPKyjZ\nLoqFRAjjK/vKcBPTbnMxwaKFywKBgQC7Lo3nminqrUjzhfudOlhC17nFsf3D6QhU\nDH22Xk88hWwrxA3ODVqKo3HvNfEJTcThePQ5ARHOp2b8+vMZCWVqzyiohu4a+iai\nKtIcHWRpzLqPGxTBv3mp1Tl9lKuSOQBoouOpuWv2thiDe9LxvSs9Z1NGVQ6G4pVa\n03Kfbtc5rwKBgHOGZQGMH08SPruag+4dHK3bnQpu9M/Ns2lEfVizhmOvumi+LcBo\nm7KW4qFxJrIDFAbm/exj/6a2FWxSF4CtRLoBqLEpA+VmHG5oL2nJ0f/ztu5NWgeZ\nir0P6BdXTSWFuuxZrHMiE9pW2ZiC1B7MCdYdizIOS3BMEy/7gskpdyNNAoGAVa5O\nuJhB3bFqdkZ7UZI2eopi+BKslXPjIw4AsWzkGlD8neAFba+BJXsBmTz404hsucTz\nDfDmZNEN/Hkms+wwJz8iXlo9Pc4JxyuQt9vgbemP8Be2XaW3HD2FLm3SR4GeJUeC\nrNs6h1j9SZpxicRMubPFU6l1l9q6ATRPAJntHPMCgYArMrFNgNheMM3+915FTQgO\nlFe/FwOHapVWc2+rTbc72+XwM1UREKW/kHs1TGnkYCdEXpu5zDQ09L5/M9yKhwzY\nFrCHNSRIjw2edT2JWyOaiJt5oRATMBftkFhMEUxWU/NSqzklUOW5vatTNUkfAz2n\nvst+XCDTLYMRqxC4/+7PcQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "jimmy-39@aicool-csbot.iam.gserviceaccount.com",
+  "client_id": "113492549353913020467",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/jimmy-39%40aicool-csbot.iam.gserviceaccount.com"
+}
