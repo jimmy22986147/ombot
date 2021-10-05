@@ -16,18 +16,19 @@ data = {'prod': {'survey_url':'https://docs.google.com/spreadsheets/d/1jZ7XEhS0I
         'googlesheetAPIJson':'C://Users//user//Desktop//project//OMBOT//aicool-csbot-0539c368976e.json'}
 with open('config.json', 'w') as fp:
     json.dump(data, fp)
-'''
+''' 
 import threading
 import json
 import pygsheets
 import os
+import time
 import pandas as pd
 from urllib.request import ssl, socket
 import mysql.connector
 from telnetlib import Telnet
-import time
 import datetime
 from queue import Queue
+
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', 100)
 def variable_zone(env='test'):
@@ -57,6 +58,29 @@ def ws_to_df(ws):
     return df
 
 def om_bot(text, df):
+    '''
+    # execute command, and return the output
+    def execCmd(cmd, request):
+        cmd_raw = cmd
+        cmd_ta = cmd_raw.replace('(socket)', '')
+        r = os.popen(cmd_ta)
+        result = r.read()
+        r.close()
+        #print(result)
+        if request == 'PING':
+            result = result.split('\n')[-2].replace(' ', '')
+            get_ip_icon = get_check(result)
+            result = cmd_raw+ '結果：\n'+ result+ get_ip_icon
+        elif request == 'TCPING':
+            result = result.split('\n')[-2].replace(' ', '')
+            get_ip_icon = get_check(result, 
+                                    remove_list=['Minimum=', 'Maximum=', 'Average=', 'ms'], 
+                                    spli=',',
+                                    threshold=200)
+            result = cmd_raw+ '結果：\n'+ result+ get_ip_icon        
+        bot.sendMessage(chat_id, str(result))
+        return result
+'''
     def execCmd(cmd, request, q):
         def get_check(tar, remove_list=['最小值=', '最大值=', '平均=', 'ms'], spli='，',threshold=200): 
             try:
@@ -76,18 +100,19 @@ def om_bot(text, df):
         r = os.popen(cmd_ta)
         result = r.read()
         r.close()
+        #print(result)
         if request == 'PING':
             result = result.split('\n')[-2].replace(' ', '')
             get_ip_icon = get_check(result)
-            result = (cmd_raw, ' 結果：\n'+ result+ get_ip_icon)
-            
+            result = cmd_raw+ '結果：\n'+ result+ get_ip_icon
         elif request == 'TCPING':
             result = result.split('\n')[-2].replace(' ', '')
             get_ip_icon = get_check(result, 
                                     remove_list=['Minimum=', 'Maximum=', 'Average=', 'ms'], 
                                     spli=',',
                                     threshold=200)
-            result = (cmd_raw, ' 結果：\n'+ result+ get_ip_icon)
+            result = cmd_raw+ '結果：\n'+ result+ get_ip_icon     
+        #q.put(cmd_raw)        
         q.put(result)
         
     def multithread(dx):
@@ -108,7 +133,6 @@ def om_bot(text, df):
         return result  
 
     BadRequest_ans = 'request不在查詢範圍中 / 格式不對' 
-    seperation = '\n-------------------------------'   
     try:
         text = text.upper()
         customer, request = text.split(' ')
@@ -126,13 +150,9 @@ def om_bot(text, df):
                 cmds.extend(Domain_raw)
                 cmds = [cmd_first+ i for i in cmds]
                 dx = pd.DataFrame({'req': 'PING',
-                                   'cmd': cmds,
-                                   'sep':seperation})
-                return_text_df = multithread(dx)
-                return_text_df = pd.DataFrame(return_text_df, columns=['cmd', 'result'])
-                dx = dx.merge(return_text_df, on='cmd', how='left')
-
-                return_text = '\n'.join([dx.cmd[i]+ dx.result[i]+ dx.sep[i] for i in range(len(dx))])
+                                   'cmd': cmds})
+                return_text = multithread(dx)
+                return_text = '\n'.join([str(return_text[i]) for i in range(len(return_text))])
 
             elif request in ['LIST']:
                 df2 = df.copy()
@@ -144,38 +164,29 @@ def om_bot(text, df):
                     
                 show = df2[condition]['商戶'].unique()    
                 return_text = '######List結果######\n{show}'.format(show = str(list(show)))
+                #bot.sendMessage(chat_id, return_text)
             #tcping    
             elif request in ['TCPING']:
                 cmd_first = 'tcping '
                 cmds = Domain_raw
                 cmds = [cmd_first+ i+ ' 443' for i in cmds]
                 cmds_final = []
-                group, cnt = [], 0
                 for x in cmds:
                     if '(socket)' in  x:
                         cmds_final.extend([x, x.replace('443', '80'),  x.replace('443', '9081')])
-                        group.extend([cnt] *3)
                     else:
                         cmds_final.extend([x, x.replace('443', '80')])
-                        group.extend([cnt] *2)
-                    cnt += 1
                 dx = pd.DataFrame({'req': 'TCPING',
-                                   'cmd': cmds_final,
-                                   'group':group})
-                return_text_df = multithread(dx)
-                return_text_df = pd.DataFrame(return_text_df, columns=['cmd', 'result'])
-                dx = dx.merge(return_text_df, on='cmd', how='left')
-                dx.loc[:, 'idx'] = dx.index
-                dx_g = list(dx.groupby(['group'])['idx'].idxmax())
-                dx.loc[:, 'sep'] = ''
-                for i in dx_g:
-                    dx.loc[i, 'sep'] =  seperation
-                return_text = '\n'.join([dx.cmd[i]+ dx.result[i]+ dx.sep[i] for i in range(len(dx))])
+                                   'cmd': cmds_final})
+                return_text = multithread(dx)
+                return_text = '\n'.join([str(return_text[i]) for i in range(len(return_text))])
                 
             elif request == 'IP':             
                 return_text =  '\n'.join(IP) 
+                #bot.sendMessage(chat_id, return_text)
             else:
                 return_text = BadRequest_ans
+                #bot.sendMessage(chat_id, return_text)
     except:
         return_text =  BadRequest_ans   
     return return_text
@@ -192,11 +203,10 @@ def trans_text(raw):
 
 
 def InsertLog(table, user, c, r, return_text):
-    mydb = mysql.connector.connect(host="172.16.124.220",
-                                   user="root",
+    mydb = mysql.connector.connect(host="172.16.150.100",
+                                   user="csbotmgr",
                                    password="1q2w3e4r5t",
-                                   database="cs_detection",
-                                   charset='utf8')
+                                   database="cs_detection",charset='utf8')
     mycursor = mydb.cursor()
     now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.000')
     sql = "INSERT INTO {table} (USER, createtime, cust, request, response) VALUES (%s, %s, %s, %s, %s)".format(table=table)
@@ -205,3 +215,5 @@ def InsertLog(table, user, c, r, return_text):
     mydb.commit()
     mydb.close()
     mycursor.close()
+
+

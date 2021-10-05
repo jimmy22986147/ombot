@@ -13,7 +13,7 @@ data = {'prod': {'survey_url':'https://docs.google.com/spreadsheets/d/1jZ7XEhS0I
                            'CS_Doris':'1853406042',
                            'RD':'1465290152',
                            'OM':'1798791836'},
-        'googlesheetAPIJson':'C://Users//user//Desktop//project//OMBOT//aicool-csbot-0539c368976e.json'}
+        'googlesheetAPIJson':'/root/OMBOT/aicool-csbot-0539c368976e.json'}
 with open('config.json', 'w') as fp:
     json.dump(data, fp)
 '''
@@ -58,7 +58,7 @@ def ws_to_df(ws):
 
 def om_bot(text, df):
     def execCmd(cmd, request, q):
-        def get_check(tar, remove_list=['最小值=', '最大值=', '平均=', 'ms'], spli='，',threshold=200): 
+        def get_check(tar, remove_list=['minimum=', 'maximum=', 'average=', 'ms'], spli=', ',threshold=200): 
             try:
                 rs = tar
                 for i in remove_list:
@@ -70,24 +70,30 @@ def om_bot(text, df):
                     icon = '✅'
             except:
                 icon = '❌'
-            return icon        
-        cmd_raw = cmd
-        cmd_ta = cmd_raw.replace('(socket)', '')
-        r = os.popen(cmd_ta)
-        result = r.read()
-        r.close()
-        if request == 'PING':
-            result = result.split('\n')[-2].replace(' ', '')
-            get_ip_icon = get_check(result)
-            result = (cmd_raw, ' 結果：\n'+ result+ get_ip_icon)
-            
-        elif request == 'TCPING':
-            result = result.split('\n')[-2].replace(' ', '')
-            get_ip_icon = get_check(result, 
-                                    remove_list=['Minimum=', 'Maximum=', 'Average=', 'ms'], 
-                                    spli=',',
-                                    threshold=200)
-            result = (cmd_raw, ' 結果：\n'+ result+ get_ip_icon)
+            return icon 
+        try:
+            cmd_raw = cmd
+            cmd_ta = cmd_raw.replace('(socket)', '')
+            r = os.popen(cmd_ta)
+            result = r.read()
+            r.close()
+            if request == 'PING':
+                result = result.split('\n')[-2].replace(' ', '')
+                get_ip_icon = get_check(result,                                    
+                                        remove_list=['rttmin/avg/max/mdev=', 'ms'], 
+                                        spli='/',
+                                        threshold=200)
+                result = (cmd_raw, ' 結果：\n'+ result+ get_ip_icon)
+                
+            elif request == 'TCPING':
+                result = result.split('\n')[-2].replace(' ', '')
+                get_ip_icon = get_check(result, 
+                                        remove_list=['minimum=', 'maximum=', 'average=', 'ms'], 
+                                        spli=',',
+                                        threshold=200)
+                result = (cmd_raw, ' 結果：\n'+ result+ get_ip_icon)
+        except:
+            result = 'request不在查詢範圍中 / 格式不對' 
         q.put(result)
         
     def multithread(dx):
@@ -124,7 +130,7 @@ def om_bot(text, df):
                 cmd_first = 'ping '
                 cmds = IP.copy()
                 cmds.extend(Domain_raw)
-                cmds = [cmd_first+ i for i in cmds]
+                cmds = [cmd_first+ i+ ' -c 4' for i in cmds]
                 dx = pd.DataFrame({'req': 'PING',
                                    'cmd': cmds,
                                    'sep':seperation})
@@ -146,9 +152,9 @@ def om_bot(text, df):
                 return_text = '######List結果######\n{show}'.format(show = str(list(show)))
             #tcping    
             elif request in ['TCPING']:
-                cmd_first = 'tcping '
+                cmd_first = 'tcping -t 0.3 '
                 cmds = Domain_raw
-                cmds = [cmd_first+ i+ ' 443' for i in cmds]
+                cmds = [cmd_first+ i+ ' -p 443 -c 4' for i in cmds]
                 cmds_final = []
                 group, cnt = [], 0
                 for x in cmds:
